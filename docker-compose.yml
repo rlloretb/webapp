@@ -1,0 +1,56 @@
+services:
+  dynamodb:
+    image: localstack/localstack:latest
+    container_name: berth-dynamodb
+    environment:
+      - SERVICES=dynamodb
+      - DEBUG=1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    ports:
+      - "4566:4566"
+    volumes:
+      - ./init-aws.sh:/docker-entrypoint-initaws.d/init-aws.sh
+    networks:
+      - berth-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: berth-backend
+    environment:
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - DYNAMODB_ENDPOINT_URL=http://dynamodb:4566
+    ports:
+      - "8000:8000"
+    depends_on:
+      - dynamodb
+    volumes:
+      - ./backend:/app
+    networks:
+      - berth-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: berth-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - berth-network
+
+networks:
+  berth-network:
+    driver: bridge

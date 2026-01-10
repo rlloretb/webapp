@@ -1,0 +1,54 @@
+{
+  "vessels": [
+    {
+      "vessel_id": "V001",
+      "arrival_time": 0,
+      "processing_time": 6
+    },
+    {
+      "vessel_id": "V002",
+      "arrival_time": 2,
+      "processing_time": 8
+    },
+    {
+      "vessel_id": "V003",
+      "arrival_time": 4,
+      "processing_time": 5
+    },
+    {
+      "vessel_id": "V004",
+      "arrival_time": 12,
+      "processing_time": 7
+    },
+    {
+      "vessel_id": "V005",
+      "arrival_time": 15,
+      "processing_time": 6
+    },
+    {
+      "vessel_id": "V006",
+      "arrival_time": 24,
+      "processing_time": 9
+    },
+    {
+      "vessel_id": "V007",
+      "arrival_time": 30,
+      "processing_time": 5
+    },
+    {
+      "vessel_id": "V008",
+      "arrival_time": 36,
+      "processing_time": 8
+    },
+    {
+      "vessel_id": "V009",
+      "arrival_time": 42,
+      "processing_time": 6
+    },
+    {
+      "vessel_id": "V010",
+      "arrival_time": 48,
+      "processing_time": 7
+    }
+  ]
+}

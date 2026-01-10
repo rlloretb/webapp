@@ -1,0 +1,4 @@
+uvicorn
+boto3
+fastapi
+pydantic

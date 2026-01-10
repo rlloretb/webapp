@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+  }
+
+  body {
+    @apply bg-secondary-50 text-secondary-900;
+  }
+
+  #root {
+    @apply flex flex-col h-screen;
+  }
+}
+
+@layer components {
+  /* App Layout */
+  .app {
+    @apply flex flex-col h-screen overflow-hidden;
+  }
+
+  .app-layout {
+    @apply flex flex-1 overflow-hidden;
+  }
+
+  .app-main {
+    @apply flex-1 overflow-y-auto;
+  }
+
+  /* UI Components */
+  .btn-primary {
+    @apply px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-light transition-colors duration-200 shadow-soft hover:shadow-md-custom;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-secondary-100 text-secondary-900 rounded-lg font-medium hover:bg-secondary-200 transition-colors duration-200 shadow-soft;
+  }
+
+  .btn-accent {
+    @apply px-4 py-2 bg-accent text-white rounded-lg font-medium hover:bg-accent-dark transition-colors duration-200 shadow-soft hover:shadow-md-custom;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-soft p-6 border border-secondary-100;
+  }
+
+  .card-hover {
+    @apply bg-white rounded-xl shadow-soft p-6 border border-secondary-100 hover:shadow-lg-custom transition-shadow duration-200 cursor-pointer hover:border-primary-light;
+  }
+
+  /* Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 0.5rem;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-secondary-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary rounded-lg hover:bg-primary-light;
+  }
+}
+
+@layer utilities {
+  /* Animations */
+  @keyframes slideIn {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      transform: translateY(1rem);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.4s ease-out;
+  }
+}
