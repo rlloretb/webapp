@@ -125,7 +125,9 @@ curl -X POST http://localhost:8000/solve `
   "vessels": [
     {"vessel_id": "V1", "arrival_time": 0, "processing_time": 5},
     {"vessel_id": "V2", "arrival_time": 2, "processing_time": 8}
-  ]
+  ],
+  "planning_horizon": 72,
+  "num_berths": 2
 }
 "@
 
@@ -312,6 +314,8 @@ Each view accessible from sidebar on left.
 **Expected JSON structure**:
 ```json
 {
+  "planning_horizon": 72,
+  "num_berths": 2,
   "vessels": [
     {
       "vessel_id": "V001",
@@ -327,9 +331,14 @@ Each view accessible from sidebar on left.
 }
 ```
 
-**Constraints**:
+**Parameters**:
+- `planning_horizon` (optional, default: 72): Total time window in hours
+- `num_berths` (optional, default: 2): Number of available berths
+- `vessels` (required): Array of vessel objects
+
+**Vessel constraints**:
 - vessel_id: Any string
-- arrival_time: 0-72 (hours)
+- arrival_time: 0 to planning_horizon (hours)
 - processing_time: 1+ (hours)
 
 ---

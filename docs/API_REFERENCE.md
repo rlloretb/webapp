@@ -37,9 +37,19 @@ Solve the berth scheduling problem with JSON payload.
       "arrival_time": 2,
       "processing_time": 8
     }
-  ]
+  ],
+  "planning_horizon": 72,
+  "num_berths": 2
 }
 ```
+
+**Request Parameters**:
+- `vessels` (required): Array of vessel objects with:
+  - `vessel_id` (string): Unique identifier
+  - `arrival_time` (integer): Arrival time in hours
+  - `processing_time` (integer): Processing duration in hours
+- `planning_horizon` (optional, default: 72): Total time window in hours
+- `num_berths` (optional, default: 2): Number of available berths
 
 **Response** (200 OK):
 ```json

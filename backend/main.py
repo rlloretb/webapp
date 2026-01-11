@@ -9,7 +9,7 @@ from typing import List, Dict, Optional
 import json
 import os
 from dotenv import load_dotenv
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 from solver import solve_berth_scheduling, BerthSchedulingProblem, VesselData
@@ -31,6 +31,13 @@ app.add_middleware(
 # Initialize database
 db = DynamoDBManager()
 
+# Create table if it doesn't exist
+try:
+    db.create_table()
+    print("DynamoDB table created or already exists")
+except Exception as e:
+    print(f"Note: Table might already exist or error creating: {e}")
+
 # Pydantic models
 class Vessel(BaseModel):
     vessel_id: str
@@ -39,6 +46,8 @@ class Vessel(BaseModel):
 
 class SchedulingRequest(BaseModel):
     vessels: List[Vessel]
+    planning_horizon: Optional[int] = 72  # Default: 3 days in hours
+    num_berths: Optional[int] = 2  # Default: 2 berths
 
 class SchedulingResult(BaseModel):
     problem_id: str
@@ -77,8 +86,8 @@ async def solve_scheduling(request: SchedulingRequest):
                 )
                 for v in request.vessels
             ],
-            planning_horizon=72,  # 3 days * 24 hours
-            num_berths=2
+            planning_horizon=request.planning_horizon,
+            num_berths=request.num_berths
         )
         
         # Solve the problem
@@ -94,7 +103,7 @@ async def solve_scheduling(request: SchedulingRequest):
             schedule=result['schedule'],
             makespan=result['makespan'],
             solving_time=result['solving_time'],
-            timestamp=datetime.utcnow().isoformat()
+            timestamp=datetime.now(timezone.utc).isoformat()
         )
         
         # Save to database

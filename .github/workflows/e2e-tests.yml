@@ -1,0 +1,133 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: tests/e2e/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./tests/e2e
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        working-directory: ./tests/e2e
+        run: npx playwright install --with-deps chromium
+
+      - name: Start Docker Compose
+        run: |
+          docker-compose up -d
+          echo "Waiting for services to be ready..."
+          sleep 30
+
+      - name: Wait for backend
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:8000/health; do sleep 2; done'
+
+      - name: Wait for frontend
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:3000; do sleep 2; done'
+
+      - name: Run Playwright tests
+        working-directory: ./tests/e2e
+        run: npm test
+        env:
+          CI: true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: tests/e2e/playwright-report/
+          retention-days: 30
+
+      - name: Upload test videos
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-videos
+          path: tests/e2e/test-results/
+          retention-days: 7
+
+      - name: View Docker logs on failure
+        if: failure()
+        run: docker-compose logs
+
+      - name: Stop Docker Compose
+        if: always()
+        run: docker-compose down -v
+
+  test-multiple-browsers:
+    name: Test on ${{ matrix.browser }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: e2e/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./tests/e2e
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        working-directory: ./tests/e2e
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Start Docker Compose
+        run: |
+          docker-compose up -d
+          sleep 30
+
+      - name: Wait for services
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:8000/health; do sleep 2; done'
+          timeout 60 bash -c 'until curl -f http://localhost:3000; do sleep 2; done'
+
+      - name: Run tests on ${{ matrix.browser }}
+        working-directory: ./tests/e2e
+        run: npx playwright test --project=${{ matrix.browser }}
+        env:
+          CI: true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: tests/e2e/playwright-report/
+          retention-days: 30
+
+      - name: Stop Docker Compose
+        if: always()
+        run: docker-compose down -v

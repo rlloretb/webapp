@@ -1,4 +1,6 @@
 {
+  "planning_horizon": 72,
+  "num_berths": 2,
   "vessels": [
     {
       "vessel_id": "V001",

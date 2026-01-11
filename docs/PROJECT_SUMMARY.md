@@ -166,7 +166,7 @@ npm start
 
 ## Key Technologies
 
-- **Backend**: FastAPI, PuLP, Pydantic, Boto3
+- **Backend**: FastAPI, Pydantic, Boto3
 - **Frontend**: React 18, Axios, React Router
 - **Database**: DynamoDB (LocalStack for dev)
 - **Infrastructure**: Docker, Docker Compose

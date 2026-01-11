@@ -1,7 +1,28 @@
 [project]
 name = "webapp"
 version = "0.1.0"
-description = "Add your description here"
+description = "Berth Scheduling Optimization Webapp"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "fastapi==0.104.1",
+    "uvicorn==0.24.0",
+    "pydantic==2.5.0",
+    "boto3==1.29.7",
+    "python-multipart==0.0.6",
+    "python-dotenv==1.0.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest==7.4.3",
+    "pytest-asyncio==0.21.1",
+    "httpx==0.25.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["backend"]

@@ -6,7 +6,7 @@ import boto3
 import os
 import json
 from typing import Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 class DynamoDBManager:
     """Manager for DynamoDB operations."""
@@ -74,7 +74,7 @@ class DynamoDBManager:
         try:
             item = {
                 'problem_id': problem_id,
-                'timestamp': solution_data.get('timestamp', datetime.utcnow().isoformat()),
+                'timestamp': solution_data.get('timestamp', datetime.now(timezone.utc).isoformat()),
                 'makespan': solution_data.get('makespan', 0),
                 'solving_time': str(solution_data.get('solving_time', 0)),
                 'num_vessels': len(solution_data.get('vessels', [])),
@@ -124,6 +124,10 @@ class DynamoDBManager:
             # Parse JSON fields
             item['schedule'] = json.loads(item.get('schedule_json', '{}'))
             item['vessels'] = json.loads(item.get('vessels_json', '[]'))
+            
+            # Remove JSON string fields - return clean object
+            item.pop('schedule_json', None)
+            item.pop('vessels_json', None)
             
             return item
         except Exception as e:

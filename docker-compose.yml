@@ -8,10 +8,12 @@ services:
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
       - AWS_DEFAULT_REGION=us-east-1
+      - PERSISTENCE=1
     ports:
       - "4566:4566"
     volumes:
       - ./init-aws.sh:/docker-entrypoint-initaws.d/init-aws.sh
+      - dynamodb-data:/var/lib/localstack
     networks:
       - berth-network
 
@@ -54,3 +56,7 @@ services:
 networks:
   berth-network:
     driver: bridge
+
+volumes:
+  dynamodb-data:
+    driver: local

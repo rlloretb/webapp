@@ -70,6 +70,15 @@ AWS_CREDENTIALS
 .coverage
 htmlcov/
 
+# Playwright E2E Tests
+tests/e2e/playwright-report/
+tests/e2e/test-results/
+tests/e2e/.cache/
+tests/e2e/node_modules/
+tests/e2e/screenshots/
+tests/e2e/videos/
+tests/e2e/package-lock.json
+
 # Local development
 *.db
 *.sqlite

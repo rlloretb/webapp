@@ -1,0 +1,21 @@
+{
+  "planning_horizon": 72,
+  "num_berths": 2,
+  "vessels": [
+    {
+      "vessel_id": "TEST001",
+      "arrival_time": 0,
+      "processing_time": 5
+    },
+    {
+      "vessel_id": "TEST002",
+      "arrival_time": 3,
+      "processing_time": 7
+    },
+    {
+      "vessel_id": "TEST003",
+      "arrival_time": 8,
+      "processing_time": 4
+    }
+  ]
+}

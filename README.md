@@ -115,10 +115,16 @@ webapp/
 
 **Backend**:
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# From project root
+python -m venv .venv
+.venv\Scripts\activate  # On Windows
+source .venv/bin/activate  # On Linux/Mac
+
+# Install production dependencies
 pip install -r requirements.txt
+
+# Run backend
+cd backend
 python main.py
 ```
 
@@ -198,7 +204,7 @@ This provides fast solutions suitable for real-time decision support.
 ## Future Enhancements
 
 1. **Advanced Solvers**:
-   - Mixed Integer Programming solver (PuLP/Gurobi)
+   - Mixed Integer Programming solvers
    - Constraint Programming
    - Metaheuristics (Tabu Search, Genetic Algorithms)
 

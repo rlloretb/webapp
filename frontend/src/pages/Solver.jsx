@@ -5,6 +5,8 @@ function Solver({ onSolutionSaved }) {
   const [vessels, setVessels] = useState([
     { vessel_id: '', arrival_time: '', processing_time: '' }
   ]);
+  const [planningHorizon, setPlanningHorizon] = useState(72);
+  const [numBerths, setNumBerths] = useState(2);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -56,7 +58,9 @@ function Solver({ onSolutionSaved }) {
           vessel_id: v.vessel_id,
           arrival_time: parseInt(v.arrival_time),
           processing_time: parseInt(v.processing_time)
-        }))
+        })),
+        planning_horizon: parseInt(planningHorizon),
+        num_berths: parseInt(numBerths)
       };
 
       const response = await fetch('/solve', {
@@ -101,6 +105,12 @@ function Solver({ onSolutionSaved }) {
           return;
         }
         setVessels(data.vessels);
+        if (data.planning_horizon !== undefined) {
+          setPlanningHorizon(data.planning_horizon);
+        }
+        if (data.num_berths !== undefined) {
+          setNumBerths(data.num_berths);
+        }
         setSuccess('File loaded successfully!');
       } catch (err) {
         setError('Invalid JSON file');
@@ -166,6 +176,38 @@ function Solver({ onSolutionSaved }) {
           </div>
         )}
 
+        {/* Problem Parameters */}
+        <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-secondary-700 mb-2">
+              Planning Horizon (hours)
+            </label>
+            <input
+              type="number"
+              value={planningHorizon}
+              onChange={(e) => setPlanningHorizon(e.target.value)}
+              min="1"
+              disabled={loading}
+              className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+            />
+            <p className="text-xs text-secondary-500 mt-1">Total time window for scheduling (e.g., 72 hours = 3 days)</p>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-secondary-700 mb-2">
+              Number of Berths
+            </label>
+            <input
+              type="number"
+              value={numBerths}
+              onChange={(e) => setNumBerths(e.target.value)}
+              min="1"
+              disabled={loading}
+              className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+            />
+            <p className="text-xs text-secondary-500 mt-1">Number of available berths at the port</p>
+          </div>
+        </div>
+
         <div className="overflow-x-auto mb-6">
           <table className="w-full">
             <thead>
@@ -194,7 +236,7 @@ function Solver({ onSolutionSaved }) {
                       type="number"
                       value={vessel.arrival_time}
                       onChange={(e) => handleVesselChange(index, 'arrival_time', e.target.value)}
-                      placeholder="0-72"
+                      placeholder={`0-${planningHorizon}`}
                       disabled={loading}
                       className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                     />
@@ -204,7 +246,7 @@ function Solver({ onSolutionSaved }) {
                       type="number"
                       value={vessel.processing_time}
                       onChange={(e) => handleVesselChange(index, 'processing_time', e.target.value)}
-                      placeholder="1-72"
+                      placeholder={`1-${planningHorizon}`}
                       disabled={loading}
                       className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                     />

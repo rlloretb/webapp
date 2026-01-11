@@ -133,8 +133,6 @@ Complete guide to all files in the Berth Scheduling Webapp project.
     - pydantic==2.5.0
     - boto3==1.29.7
     - python-multipart==0.0.6
-    - pulp==2.7.0
-    - pytest==7.4.3
     - python-dotenv==1.0.0
 
 - **`.env.example`**
