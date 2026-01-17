@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import Modal from '../components/Modal';
+import BerthScheduleChart from '../components/BerthScheduleChart';
 
 function History({ solutions }) {
   const [selectedSolution, setSelectedSolution] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [expandedCharts, setExpandedCharts] = useState(new Set());
+  const [chartData, setChartData] = useState({});
 
   const handleViewDetails = async (problemId) => {
     try {
@@ -27,6 +30,30 @@ function History({ solutions }) {
     } catch (error) {
       console.error('Error deleting solution:', error);
     }
+  };
+
+  const toggleChart = async (problemId) => {
+    const newExpanded = new Set(expandedCharts);
+    
+    if (newExpanded.has(problemId)) {
+      // Collapse chart
+      newExpanded.delete(problemId);
+    } else {
+      // Expand chart - fetch solution data if not already cached
+      if (!chartData[problemId]) {
+        try {
+          const response = await fetch('/solution/' + problemId);
+          const data = await response.json();
+          setChartData(prev => ({ ...prev, [problemId]: data }));
+        } catch (error) {
+          console.error('Error fetching solution details:', error);
+          return;
+        }
+      }
+      newExpanded.add(problemId);
+    }
+    
+    setExpandedCharts(newExpanded);
   };
 
   return (
@@ -56,29 +83,49 @@ function History({ solutions }) {
                   <th className="text-left py-3 px-4 font-semibold text-secondary-700 text-sm uppercase tracking-wide">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-secondary-100">
+              <tbody>
                 {solutions.map(sol => (
-                  <tr key={sol.problem_id} className="hover:bg-secondary-50 transition-colors">
-                    <td className="py-3 px-4"><code className="text-xs bg-secondary-100 px-2 py-1 rounded text-primary font-mono">{sol.problem_id.substring(0, 12)}...</code></td>
-                    <td className="py-3 px-4"><span className="inline-block bg-primary text-white px-3 py-1 rounded-full text-sm font-semibold">{sol.num_vessels}</span></td>
-                    <td className="py-3 px-4"><span className="font-bold text-primary text-lg">{sol.makespan}</span> <span className="text-secondary-600 text-sm">hrs</span></td>
-                    <td className="py-3 px-4 text-secondary-600">{(parseFloat(sol.solving_time) * 1000).toFixed(0)} ms</td>
-                    <td className="py-3 px-4 text-secondary-600 text-sm">{new Date(sol.timestamp).toLocaleString()}</td>
-                    <td className="py-3 px-4 flex gap-2">
-                      <button
-                        onClick={() => handleViewDetails(sol.problem_id)}
-                        className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-primary-light transition-colors disabled:opacity-50 text-sm font-medium"
-                      >
-                        View
-                      </button>
-                      <button
-                        onClick={() => handleDelete(sol.problem_id)}
-                        className="px-3 py-1 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50 text-sm font-medium"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
+                  <React.Fragment key={sol.problem_id}>
+                    <tr className="hover:bg-secondary-50 transition-colors border-b border-secondary-100">
+                      <td className="py-3 px-4"><code className="text-xs bg-secondary-100 px-2 py-1 rounded text-primary font-mono">{sol.problem_id.substring(0, 12)}...</code></td>
+                      <td className="py-3 px-4"><span className="inline-block bg-primary text-white px-3 py-1 rounded-full text-sm font-semibold">{sol.num_vessels}</span></td>
+                      <td className="py-3 px-4"><span className="font-bold text-primary text-lg">{sol.makespan}</span> <span className="text-secondary-600 text-sm">hrs</span></td>
+                      <td className="py-3 px-4 text-secondary-600">{(parseFloat(sol.solving_time) * 1000).toFixed(0)} ms</td>
+                      <td className="py-3 px-4 text-secondary-600 text-sm">{new Date(sol.timestamp).toLocaleString()}</td>
+                      <td className="py-3 px-4 flex gap-2">
+                        <button
+                          onClick={() => toggleChart(sol.problem_id)}
+                          className="px-3 py-1 bg-accent text-white rounded-lg hover:bg-accent-dark transition-colors disabled:opacity-50 text-sm font-medium flex items-center gap-1"
+                          title="Show Gantt Chart"
+                        >
+                          <span>{expandedCharts.has(sol.problem_id) ? '📊' : '📈'}</span>
+                          {expandedCharts.has(sol.problem_id) ? 'Hide' : 'Chart'}
+                        </button>
+                        <button
+                          onClick={() => handleViewDetails(sol.problem_id)}
+                          className="px-3 py-1 bg-primary text-white rounded-lg hover:bg-primary-light transition-colors disabled:opacity-50 text-sm font-medium"
+                        >
+                          View
+                        </button>
+                        <button
+                          onClick={() => handleDelete(sol.problem_id)}
+                          className="px-3 py-1 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50 text-sm font-medium"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                    {expandedCharts.has(sol.problem_id) && chartData[sol.problem_id] && (
+                      <tr>
+                        <td colSpan="6" className="p-6 bg-secondary-50 border-b border-secondary-200">
+                          <BerthScheduleChart 
+                            schedule={chartData[sol.problem_id].schedule}
+                            numBerths={chartData[sol.problem_id].num_berths || 2}
+                          />
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>
