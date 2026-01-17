@@ -14,11 +14,7 @@ function Dashboard({ solutions }) {
   ];
 
   return (
-    <div className="p-8 space-y-8 animate-fade-in">
-      <div>
-        <h2 className="text-4xl font-bold text-primary-dark mb-2">Dashboard</h2>
-        <p className="text-secondary-600">Overview of your berth scheduling optimization solutions</p>
-      </div>
+    <div className="p-8 pt-8 space-y-8 animate-fade-in">
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

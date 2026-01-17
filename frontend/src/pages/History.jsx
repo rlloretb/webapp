@@ -57,13 +57,8 @@ function History({ solutions }) {
   };
 
   return (
-    <div className="p-8 space-y-8 animate-fade-in">
-      <div>
-        <h2 className="text-4xl font-bold text-primary-dark mb-2">Solution History</h2>
-        <p className="text-secondary-600">Review and manage all your previously solved scheduling problems</p>
-      </div>
-
-      <div className="bg-white rounded-xl shadow-soft p-6 border border-secondary-100 animate-fade-in-up">
+    <div className="flex flex-col h-full animate-fade-in">
+      <div className="flex-1 mx-8 mt-8 mb-8 bg-white rounded-xl shadow-soft p-6 border border-secondary-100 animate-fade-in-up flex flex-col overflow-hidden">
         <div className="mb-6 border-b border-secondary-200 pb-4">
           <h3 className="text-2xl font-bold text-secondary-900 flex items-center gap-2">
             <span>📋</span> Saved Solutions
@@ -71,7 +66,7 @@ function History({ solutions }) {
         </div>
 
         {solutions.length > 0 ? (
-          <div className="overflow-x-auto">
+          <div className="overflow-y-auto flex-1">
             <table className="w-full">
               <thead>
                 <tr className="border-b-2 border-secondary-300">
@@ -131,12 +126,14 @@ function History({ solutions }) {
             </table>
           </div>
         ) : (
-          <div className="text-center py-12">
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
             <svg className="mx-auto h-16 w-16 text-secondary-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             <p className="text-secondary-600 text-lg font-medium">No solutions saved yet</p>
             <p className="text-secondary-400 text-sm mt-2">Create one from the Solver tab to get started!</p>
+            </div>
           </div>
         )}
       </div>

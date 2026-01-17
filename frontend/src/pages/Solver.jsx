@@ -121,11 +121,6 @@ function Solver({ onSolutionSaved }) {
 
   return (
     <div className="p-8 space-y-8 animate-fade-in">
-      <div>
-        <h2 className="text-4xl font-bold text-primary-dark mb-2">Problem Solver</h2>
-        <p className="text-secondary-600">Upload or manually enter vessel data to optimize berth schedules</p>
-      </div>
-
       {/* File Upload Section */}
       <div className="bg-white rounded-xl shadow-soft p-6 border border-secondary-100 animate-fade-in-up">
         <div className="mb-6 border-b border-secondary-200 pb-4">
